@@ -1,0 +1,38 @@
+name: Buscador Automatico
+
+on:
+  workflow_dispatch:
+    inputs:
+      palabra:
+        description: 'Escribe la palabra o nombre a buscar'
+        required: true
+        default: 'GitHub'
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Descargar repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Ejecutar script de búsqueda
+      env:
+        PALABRA_BUSQUEDA: ${{ github.event.inputs.palabra }}
+      run: node script.js
+
+    - name: Guardar cambios y subirlos al repositorio
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add datos.json
+        git commit -m "Auto-búsqueda: ${{ github.event.inputs.palabra }}" || exit 0
+        git push
