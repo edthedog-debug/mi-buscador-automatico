@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Inteligente</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; width: 100%; text-align: center; }
+        h1 { color: #1a1a1a; margin-bottom: 10px; }
+        p { color: #4a4a4a; line-height: 1.6; text-align: left; }
+        img { max-width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin: 15px 0; }
+        .btn { display: inline-block; background: #0070f3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px; transition: background 0.2s; }
+        .btn:hover { background: #0051cb; }
+        .footer { font-size: 0.8rem; color: #888; margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="app">
+    <h2>Cargando información...</h2>
+</div>
+
+<script>
+    // Intentamos leer el archivo donde la automatización guarda los datos
+    fetch('datos.json')
+        .then(res => res.json())
+        .then(data => {
+            const app = document.getElementById('app');
+            if (data.error) {
+                app.innerHTML = `<h2 style="color:#ff3333">Ups...</h2><p>${data.error}</p>`;
+                return;
+            }
+            app.innerHTML = `
+                <h1>${data.titulo}</h1>
+                ${data.imagen ? `<img src="${data.imagen}">` : ''}
+                <p>${data.resumen}</p>
+                <a href="${data.link}" target="_blank" class="btn">Leer artículo completo</a>
+                <div class="footer">Actualizado automáticamente el: ${data.fecha}</div>
+            `;
+        })
+        .catch(() => {
+            document.getElementById('app').innerHTML = `
+                <h2>¡Todo listo!</h2>
+                <p>Ve a la pestaña <strong>Actions</strong> en tu GitHub, ejecuta el buscador con la palabra que quieras y los resultados aparecerán aquí.</p>
+            `;
+        });
+</script>
+
+</body>
+</html>
